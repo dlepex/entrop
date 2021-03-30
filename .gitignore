@@ -32,4 +32,5 @@ testdata/**/*_ti.go
 
 # specific
 
-zamok
+entrop
+entrop.wasm
