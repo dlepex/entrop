@@ -34,3 +34,5 @@ testdata/**/*_ti.go
 
 entrop
 entrop.wasm
+build/
+bin/

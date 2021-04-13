@@ -12,6 +12,8 @@ clean:
 run:
 	go build -o $(EXE) -v
 	./$(EXE)
+prebuild:
+	mkdir -p build
 build:
 	go build -o $(EXE)
 build-wasm:
