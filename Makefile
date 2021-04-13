@@ -1,6 +1,6 @@
 EXE=entrop
 EXE_WASM=$(EXE).wasm
-EXE_LINUX=entrop
+EXE_LINUX=$(EXE)
 
 all: test build build-wasm
 
