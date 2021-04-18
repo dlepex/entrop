@@ -20,11 +20,13 @@ const (
 	DefaultLen     = 25
 	DefaultCharset = "alnum"
 	DefaultAlg     = "pbs5"
+	OptInlineMode  = "i"
 )
 
 type Options struct {
 	Alg        AlgSpec
 	Sep        string
+	Ver        uint // alg_defaults version
 	CountWords bool
 	Words      []string
 	PwdLen     uint
@@ -39,17 +41,18 @@ type AlgSpec struct {
 }
 
 func (opts *Options) Parse(args []string) {
-	fs := flag.NewFlagSet("fs", flag.ExitOnError)
+	fs := flag.NewFlagSet("entrop", flag.ExitOnError)
 	var spec string
-	fs.BoolVar(&verbose, "v", false, "do not count words")
+	fs.BoolVar(&verbose, "v", false, "verbose mode")
+	isNotInteractive := fs.Bool(OptInlineMode, false, "inline mode, i.e. no hidden inputs")
 	fs.StringVar(&spec, "a", DefaultAlg, "algorithm with optional params: e.g. ar:3:32768 or rsha:11111111")
-	fs.UintVar(&opts.PwdLen, "l", DefaultLen, "pwd length")
+	fs.UintVar(&opts.PwdLen, "l", DefaultLen, "password length")
+	fs.UintVar(&opts.Ver, "V", 0, "alg settings ('defaults') version")
 	fs.StringVar(&opts.Sep, "s", DefaultSep, "separator")
-	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset")
+	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset, see charsets.go")
 
-	isNotInteractive := fs.Bool("pm", false, "parametric mode i.e. non-interactive")
 	isNotCountWords := fs.Bool("ncw", false, "no word numbering/counting")
-	isNoQuality := fs.Bool("nq", false, "no quality check and retry")
+	isNoQuality := fs.Bool("nq", false, "no quality check/retry")
 
 	Check(fs.Parse(args))
 	opts.CountWords = !*isNotCountWords
@@ -61,19 +64,23 @@ func (opts *Options) Parse(args []string) {
 	} else {
 		opts.readSecrets()
 	}
+}
 
-	// Calculated properties:
+// Init must be called after Parse()
+func (opts *Options) Init() {
 	if opts.Alg.Name == "old" {
 		opts.Charset = "old"
 		opts.CountWords = false
+		opts.Sep = " "
 	}
 	if len(opts.Words) == 0 {
 		Terminate("no words")
 	}
 	opts.wstr = opts.WordsToString()
 	opts.Quality = opts.Quality && len(opts.wstr) >= 6 && CharsetSupportsQuality(opts.Charset)
+	SetAlgDefaults(int(opts.Ver))
 	if verbose {
-		log.Printf("opts: %+v", opts)
+		log.Printf("init opts: %+v", opts)
 	}
 }
 
@@ -173,7 +180,12 @@ func (spec *AlgSpec) Param(idx int, defvalue int) int {
 
 func CallEntrop(line string) string {
 	opts := Options{}
-	args := strings.Fields("-pm " + line)
+	args := StringToArgs("-" + OptInlineMode + " " + line)
 	opts.Parse(args)
+	opts.Init()
 	return opts.Password()
+}
+
+func StringToArgs(line string) []string {
+	return strings.Fields(line)
 }

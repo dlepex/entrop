@@ -12,6 +12,7 @@ func main() {
 	log.SetFlags(0)
 	opts := Options{}
 	opts.Parse(os.Args[1:])
+	opts.Init()
 	fmt.Println(opts.Password())
 }
 
