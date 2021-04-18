@@ -187,5 +187,6 @@ func CallEntrop(line string) string {
 }
 
 func StringToArgs(line string) []string {
+	//TODO better implementation, supporting quotation (e.g. -s "   ")
 	return strings.Fields(line)
 }
