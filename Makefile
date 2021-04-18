@@ -1,7 +1,7 @@
 EXE=entrop
 EXE_WASM=$(EXE).wasm
 EXE_LINUX=$(EXE)
-SALT_FILE=salt_v2
+SALT_FILE=salt_v4
 
 all: test build
 
