@@ -23,3 +23,11 @@ _Usage of entrop_:
         separator (default " ")
   -v    verbose mode
 ```
+
+In inline mode (-i), separator can be specified with -s option, and words must be specified after flags:
+```
+entrop -i -l 15 -s "+++" hello world 12345
+# separator=+++; words=hello,world,12345
+```
+In a default non-inline mode, separator and words will be asked in hidden inputs (as in `read -s`).
+Inline mode is not recommended, it is insecure. Use inline mode only if you can disable commands history in your shell.
