@@ -21,12 +21,15 @@ type AlgArgs struct {
 type AlgFunc = func(AlgArgs) []byte
 
 var algFuncMap = map[string]AlgFunc{
-	"old":  AlgSimpleHash(md5.New),
 	"pbs1": AlgPB2_SHA1,
 	"pbs2": AlgPB2_SHA256,
 	"pbs5": AlgPB2_SHA512,
 	"ar":   AlgArgon2,
-	"rsha": AlgRepeatedSha, // only for "short" pwd: length<=64
+	"rh":   AlgRepeatedHash, // only for "short" pwd: length<=64, experimental
+	// deprecated algs:
+	"old":  AlgSimpleHash(md5.New),
+	"old2": AlgSimpleHash(sha256.New),
+	"old5": AlgSimpleHash(sha512.New),
 }
 
 func AlgSimpleHash(hfac func() hash.Hash) AlgFunc {
@@ -54,8 +57,8 @@ func AlgArgon2(args AlgArgs) []byte {
 		uint32(args.Spec.Param(1, algDefs.ArgonMem)), 1, uint32(args.ReqLen))
 }
 
-func AlgRepeatedSha(args AlgArgs) []byte {
-	r := RepeatedHash(sha512.New(), args.Spec.Param(0, algDefs.RSHARounds), algDefs.Salt, args.Str)
+func AlgRepeatedHash(args AlgArgs) []byte {
+	r := RepeatedHash(sha512.New(), args.Spec.Param(0, algDefs.RHRounds), algDefs.Salt, args.Str)
 	if len(r) > args.ReqLen {
 		return r[:args.ReqLen]
 	}

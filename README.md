@@ -9,7 +9,7 @@ _Usage of entrop_:
   -V uint
         alg settings ('defaults') version, default = 0
   -a string
-        algorithm with optional params: e.g. ar:3:32768 or rsha:11111111 (default "pbs5")
+        algorithm with optional params: e.g. ar:3:32768 or rh:125000 (default "pbs5")
   -c string
         charset, see charsets.go (default "alnum")
   -i    inline mode, i.e. no hidden inputs for words & separator
