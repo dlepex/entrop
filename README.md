@@ -35,6 +35,6 @@ Inline mode is not recommended, it is insecure. Use inline mode only if you can 
 
 ## GUI
 
-*entrop* also is available for usage online (for that puprose it was compiled to wasm):
+*entrop* is also available for usage online (for that puprose it was compiled to wasm):
 
 https://dlepex.github.io/7w/index.html
