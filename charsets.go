@@ -5,14 +5,21 @@ import (
 	"strings"
 )
 
+const (
+	CharsetPrintableAscii = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+)
+
 var charsetsMap = map[string]string{
-	"alnum": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",                                   // default
-	"goog":  "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", // all non whitespace ascii
+	"alnum": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", // alphanumeric, default
+	"pasc":  CharsetPrintableAscii,
+	"goog":  CharsetPrintableAscii, // synonym for pasc
 	"num":   "0123456789",
-	// for fun only:
+	// some others:
 	"bin":   "01",
 	"hex":   "0123456789ABCDEF",
-	"alfa":  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+	"al":    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+	"lower": "abcdefghijklmnopqrstuvwxyz",
+	"upper": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	"words": "abcdefghijklmnopqrstuvwxyz ",
 }
 
@@ -57,7 +64,7 @@ func PasswordQuality(pwd string) int {
 	return len(cats)
 }
 
-func CharsetSupportsQuality(cs string) bool {
+func CharsetSupportsQuality(charsetname string) bool {
 	// not all charsets support quality (like number charsets etc)
-	return PasswordQuality(charsetsMap[cs]) >= 3
+	return PasswordQuality(charsetsMap[charsetname]) >= 3
 }
