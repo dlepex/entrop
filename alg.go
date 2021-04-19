@@ -25,7 +25,7 @@ var algFuncMap = map[string]AlgFunc{
 	"pbs2": AlgPB2_SHA256,
 	"pbs5": AlgPB2_SHA512,
 	"ar":   AlgArgon2,
-	"rh":   AlgRepeatedHash, // only for "short" pwd: length<=64, experimental
+	"rh":   AlgRepeatedHash, // only for "short" pwd: length<=64
 	// deprecated algs:
 	"old":  AlgSimpleHash(md5.New),
 	"old2": AlgSimpleHash(sha256.New),
