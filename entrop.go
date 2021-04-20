@@ -47,7 +47,7 @@ func (opts *Options) Parse(args []string) {
 	isNotInteractive := fs.Bool(OptInlineMode, false, "inline mode, i.e. no hidden inputs")
 	fs.StringVar(&spec, "a", DefaultAlg, "algorithm with optional params: e.g. ar:3:32768 or rh:62500")
 	fs.UintVar(&opts.PwdLen, "l", DefaultLen, "password length")
-	fs.UintVar(&opts.Ver, "V", 0, "alg settings ('defaults') version")
+	fs.UintVar(&opts.Ver, "d", 0, "alg settings ('defaults') version")
 	fs.StringVar(&opts.Sep, "s", DefaultSep, "separator")
 	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset, see charsets.go")
 
@@ -68,7 +68,7 @@ func (opts *Options) Parse(args []string) {
 
 // Init must be called after Parse()
 func (opts *Options) Init() {
-	if strings.HasSuffix(opts.Alg.Name, "old") {
+	if strings.HasPrefix(opts.Alg.Name, "old") {
 		// compatibility with deprecated algorithms
 		opts.Charset = "old"
 		opts.CountWords = false
