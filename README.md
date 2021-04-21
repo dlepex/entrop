@@ -23,6 +23,8 @@ Usage of entrop:
   -s string
         separator (default " ")
   -v    verbose mode
+  -version
+        print version
 ```
 
 In inline mode (-i), separator can be specified with -s option, and words must be specified after flags:

@@ -20,6 +20,7 @@ func jsGenPassword(this js.Value, args []js.Value) (res interface{}) {
 func main() {
 	done := make(chan struct{}, 0)
 	js.Global().Set("Entrop_GenPassword", js.FuncOf(jsGenPassword))
+	js.Global().Set("Entrop_Version", js.ValueOf(EntropVersion()))
 	<-done
 }
 

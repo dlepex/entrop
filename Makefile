@@ -26,5 +26,5 @@ build-arm:
 mk-salt:
 	dd if=/dev/random of=embed/$(SALT_FILE) bs=64 count=1
 mk-version:
-	git rev-parse HEAD > embed/gitcommit
+	git rev-parse HEAD > embed/gitcommit; \
  	git describe --abbrev=0 --tags > embed/gittag

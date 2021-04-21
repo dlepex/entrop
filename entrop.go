@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +33,6 @@ type Options struct {
 	PwdLen     uint
 	Charset    string
 	Quality    bool
-	wstr       string
 }
 
 type AlgSpec struct {
@@ -45,6 +45,7 @@ func (opts *Options) Parse(args []string) {
 	var spec string
 	fs.BoolVar(&verbose, "v", false, "verbose mode")
 	isNotInteractive := fs.Bool(OptInlineMode, false, "inline mode, i.e. no hidden inputs")
+	isVersion := fs.Bool("version", false, "print version")
 	fs.StringVar(&spec, "a", DefaultAlg, "algorithm with optional params: e.g. ar:3:32768 or rh:62500")
 	fs.UintVar(&opts.PwdLen, "l", DefaultLen, "password length")
 	fs.UintVar(&opts.Ver, "d", 0, "alg settings ('defaults') version")
@@ -55,6 +56,10 @@ func (opts *Options) Parse(args []string) {
 	isNoQuality := fs.Bool("nq", false, "no quality check/retry")
 
 	Check(fs.Parse(args))
+	if *isVersion {
+		fmt.Println(EntropVersion())
+		os.Exit(0)
+	}
 	opts.CountWords = !*isNotCountWords
 	opts.Quality = !*isNoQuality
 	opts.Alg = AlgSpecFromStr(spec)
@@ -66,7 +71,7 @@ func (opts *Options) Parse(args []string) {
 	}
 }
 
-// Init must be called after Parse()
+// Init MUST be called after fields assignment and after Parse()
 func (opts *Options) Init() {
 	if strings.HasPrefix(opts.Alg.Name, "old") {
 		// compatibility with deprecated algorithms
@@ -76,7 +81,6 @@ func (opts *Options) Init() {
 	if len(opts.Words) == 0 {
 		Terminate("no words")
 	}
-	opts.wstr = opts.WordsToString()
 	opts.Quality = opts.Quality && opts.PwdLen >= 6 && CharsetSupportsQuality(opts.Charset)
 	SetAlgDefaults(int(opts.Ver))
 	if verbose {
@@ -112,25 +116,28 @@ func (opts *Options) WordsToString() string {
 }
 
 func (opts *Options) Password() string {
-	wstr := opts.wstr
+	wstrinit := opts.WordsToString()
+	wstr := wstrinit
 	for i := 2; ; i++ {
-		pwd := opts.tryGenPassword()
+		pwd := opts.tryGenPassword(wstr)
 		if !opts.Quality || PasswordQuality(pwd) >= 3 {
 			return pwd
 		}
-		opts.wstr = wstr + "@" + strconv.Itoa(i)
+		wstr = wstrinit + "@" + strconv.Itoa(i)
 		if verbose {
 			log.Printf("quality retry: %+v", opts.Words)
 		}
 	}
 }
 
-func (opts *Options) tryGenPassword() string {
+func (opts *Options) tryGenPassword(wstr string) string {
 	alg, ok := algFuncMap[opts.Alg.Name]
 	if !ok {
 		Terminate("no such alg: %s", opts.Alg.Name)
 	}
-	wstr := opts.wstr
+	if wstr == "" {
+		Terminate("empty input")
+	}
 	if verbose {
 		log.Println("wstr:[" + wstr + "]")
 	}
