@@ -77,7 +77,7 @@ func (opts *Options) Init() {
 		Terminate("no words")
 	}
 	opts.wstr = opts.WordsToString()
-	opts.Quality = opts.Quality && len(opts.wstr) >= 6 && CharsetSupportsQuality(opts.Charset)
+	opts.Quality = opts.Quality && opts.PwdLen >= 6 && CharsetSupportsQuality(opts.Charset)
 	SetAlgDefaults(int(opts.Ver))
 	if verbose {
 		log.Printf("init opts: %+v", opts)

@@ -21,9 +21,9 @@ type AlgArgs struct {
 type AlgFunc = func(AlgArgs) []byte
 
 var algFuncMap = map[string]AlgFunc{
-	"pbs1": AlgPB2_SHA1,
-	"pbs2": AlgPB2_SHA256,
-	"pbs5": AlgPB2_SHA512,
+	"pbs1": AlgPBKDF2(sha1.New),
+	"pbs2": AlgPBKDF2(sha256.New),
+	"pbs5": AlgPBKDF2(sha512.New),
 	"ar":   AlgArgon2,
 	"rh":   AlgRepeatedHash, // only for "short" pwd: length<=64
 	// deprecated algs:
@@ -40,16 +40,10 @@ func AlgSimpleHash(hfac func() hash.Hash) AlgFunc {
 	}
 }
 
-func (a *AlgArgs) PBRounds() int { return a.Spec.Param(0, algDefs.PBKDF2Rounds) }
-
-func AlgPB2_SHA256(args AlgArgs) []byte {
-	return pbkdf2.Key(args.Str, algDefs.Salt, args.PBRounds(), args.ReqLen, sha256.New)
-}
-func AlgPB2_SHA512(args AlgArgs) []byte {
-	return pbkdf2.Key(args.Str, algDefs.Salt, args.PBRounds(), args.ReqLen, sha512.New)
-}
-func AlgPB2_SHA1(args AlgArgs) []byte {
-	return pbkdf2.Key(args.Str, algDefs.Salt, args.PBRounds(), args.ReqLen, sha1.New)
+func AlgPBKDF2(hfac func() hash.Hash) AlgFunc {
+	return func(args AlgArgs) []byte {
+		return pbkdf2.Key(args.Str, algDefs.Salt, args.Spec.Param(0, algDefs.PBKDF2Rounds), args.ReqLen, hfac)
+	}
 }
 
 func AlgArgon2(args AlgArgs) []byte {

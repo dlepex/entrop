@@ -2,19 +2,19 @@ package main
 
 import _ "embed"
 
-//go:embed embed/salt_v0
+//go:embed embed/salt/salt_v0
 var algSaltV0 []byte
 
-//go:embed embed/salt_v1
+//go:embed embed/salt/salt_v1
 var algSaltV1 []byte
 
-//go:embed embed/salt_v2
+//go:embed embed/salt/salt_v2
 var algSaltV2 []byte
 
-//go:embed embed/salt_v3
+//go:embed embed/salt/salt_v3
 var algSaltV3 []byte
 
-//go:embed embed/salt_v4
+//go:embed embed/salt/salt_v4
 var algSaltV4 []byte
 
 type AlgDefaultsStruct struct {
@@ -32,6 +32,7 @@ var algDefaultsVersions = []AlgDefaultsStruct{
 	{Salt: algSaltV4, PBKDF2Rounds: 451_961, ArgonTime: 10, ArgonMem: 72128, RHRounds: 615_711},
 }
 
+// current algorithm defaults
 var algDefs = algDefaultsVersions[0]
 
 func SetAlgDefaults(ver int) {

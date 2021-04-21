@@ -36,3 +36,4 @@ entrop
 entrop.wasm
 build/
 bin/
+embed/git*

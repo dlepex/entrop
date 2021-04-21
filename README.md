@@ -6,13 +6,14 @@ a password in some charset, using some good algorithms:
 
 _Usage of entrop_:
 ```
-  -V uint
-        alg settings ('defaults') version, default = 0
+Usage of entrop:
   -a string
-        algorithm with optional params: e.g. ar:3:32768 or rh:125000 (default "pbs5")
+        algorithm with optional params: e.g. ar:3:32768 or rh:62500 (default "pbs5")
   -c string
         charset, see charsets.go (default "alnum")
-  -i    inline mode, i.e. no hidden inputs for words & separator
+  -d uint
+        alg settings ('defaults') version
+  -i    inline mode, i.e. no hidden inputs
   -l uint
         password length (default 25)
   -ncw
