@@ -24,7 +24,7 @@ build-linux:
 build-arm:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o $(EXE_LINUX) -v
 salt:
-	dd if=/dev/random of=embed/$(SALT_FILE) bs=64 count=1
+	dd if=/dev/random of=embed/salt/$(SALT_FILE) bs=64 count=1
 version:
 	git rev-parse HEAD > embed/gitcommit; \
  	git describe --abbrev=0 --tags > embed/gittag
