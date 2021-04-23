@@ -6,14 +6,14 @@ import (
 )
 
 //go:embed embed/**
-var content embed.FS
+var embedFS embed.FS
 
 func EntropVersion() string {
-	commit, err := content.ReadFile("embed/gitcommit")
+	commit, err := embedFS.ReadFile("embed/gitcommit")
 	if err != nil {
 		return ""
 	}
-	tag, err := content.ReadFile("embed/gittag")
+	tag, err := embedFS.ReadFile("embed/gittag")
 	if err != nil {
 		return ""
 	}
