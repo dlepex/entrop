@@ -51,8 +51,7 @@ func (opts *Options) Parse(args []string) {
 	fs.UintVar(&opts.Ver, "d", 0, "alg settings ('defaults') version")
 	fs.StringVar(&opts.Sep, "s", DefaultSep, "separator")
 	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset, see charsets.go")
-
-	isNotCountWords := fs.Bool("ncw", false, "no word numbering/counting")
+	fs.BoolVar(&opts.CountWords, "jcw", false, "join words using counting mapper")
 	isNoQuality := fs.Bool("nq", false, "no quality check/retry")
 
 	Check(fs.Parse(args))
@@ -60,7 +59,6 @@ func (opts *Options) Parse(args []string) {
 		fmt.Println(EntropVersion())
 		os.Exit(0)
 	}
-	opts.CountWords = !*isNotCountWords
 	opts.Quality = !*isNoQuality
 	opts.Alg = AlgSpecFromStr(spec)
 

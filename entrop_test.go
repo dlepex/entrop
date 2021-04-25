@@ -8,11 +8,11 @@ import (
 func TestAlgorithms(t *testing.T) {
 	// This test ensures alg. implementations are not modified
 	cases := []struct{ line, pwd string }{
-		{line: "-a pbs5:1234 -c alnum -l 10 -s _ hello world", pwd: "sWXA4jh6m5"},
-		{line: "-a pbs2:1234 -c alnum -l 10 -s ^ hello world", pwd: "3ZSOR4xclq"},
-		{line: "-a pbs2:1234 -c alnum -l 10 -s ^ -ncw hello world", pwd: "1TUL7DZ0kk"},
-		{line: "-a rh:1234 -c goog -l 10 hello world", pwd: "RsuQ)bNCJG"},
-		{line: "-a ar:7:123 -c num -l 4 -s ,, hello world", pwd: "7289"},
+		{line: "-a pbs5:1234 -c alnum -l 10 -s _ -jcw hello world", pwd: "sWXA4jh6m5"},
+		{line: "-a pbs2:1234 -c alnum -l 10 -s ^ -jcw hello world", pwd: "3ZSOR4xclq"},
+		{line: "-a pbs2:1234 -c alnum -l 10 -s ^ hello world", pwd: "1TUL7DZ0kk"},
+		{line: "-a rh:1234 -c goog -l 10 -jcw hello world", pwd: "RsuQ)bNCJG"},
+		{line: "-a ar:7:123 -c num -l 4 -jcw -s ,, hello world", pwd: "7289"},
 	}
 
 	for _, tc := range cases {
