@@ -16,8 +16,6 @@ Usage of entrop:
   -i    inline mode, i.e. no hidden inputs
   -l uint
         password length (default 25)
-  -ncw
-        no word numbering/counting
   -nq
         no quality check/retry
   -s string
