@@ -6,7 +6,6 @@ a password in some charset, using some good algorithms:
 
 _Usage of entrop_:
 ```
-Usage of entrop:
   -a string
         algorithm with optional params: e.g. ar:3:32768 or rh:62500 (default "pbs5")
   -c string
