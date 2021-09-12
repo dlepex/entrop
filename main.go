@@ -17,5 +17,8 @@ func main() {
 }
 
 func Terminate(msg string, args ...interface{}) {
+	if msg == "" {
+		os.Exit(0)
+	}
 	log.Fatalf(msg, args...)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 )
 
 type AlgDefaultsStruct struct {
@@ -18,6 +17,7 @@ var algDefaultsVersions = []AlgDefaultsStruct{
 	{Salt: saltV(2), PBKDF2Rounds: 437_672, ArgonTime: 11, ArgonMem: 71821, RHRounds: 623_976},
 	{Salt: saltV(3), PBKDF2Rounds: 438_130, ArgonTime: 9, ArgonMem: 67199, RHRounds: 613_105},
 	{Salt: saltV(4), PBKDF2Rounds: 451_961, ArgonTime: 10, ArgonMem: 72128, RHRounds: 615_711},
+	{Salt: saltV(5), PBKDF2Rounds: 462_877, ArgonTime: 11, ArgonMem: 64012, RHRounds: 621_285},
 }
 
 // current algorithm defaults
@@ -32,8 +32,6 @@ func SetAlgDefaults(ver int) {
 
 func saltV(idx int) []byte {
 	salt, err := embedFS.ReadFile(fmt.Sprintf("embed/salt/salt_v%d", idx))
-	if err != nil {
-		log.Fatal(err)
-	}
+	Check(err)
 	return salt
 }

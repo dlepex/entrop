@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -57,7 +56,7 @@ func (opts *Options) Parse(args []string) {
 	Check(fs.Parse(args))
 	if *isVersion {
 		fmt.Println(EntropVersion())
-		os.Exit(0)
+		Terminate("")
 	}
 	opts.Quality = !*isNoQuality
 	opts.Alg = AlgSpecFromStr(spec)

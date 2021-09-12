@@ -7,14 +7,16 @@ import (
 
 const (
 	CharsetPrintableAscii = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+	CharsetAlphanum       = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 )
 
 var charsetsMap = map[string]string{
-	"alnum": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", // alphanumeric, default
+	"alnum": CharsetAlphanum, // alphanumeric, default
 	"pasc":  CharsetPrintableAscii,
-	"goog":  CharsetPrintableAscii, // synonym for pasc
-	"num":   "0123456789",
+	"goog":  CharsetPrintableAscii,   // synonym for pasc
+	"ora":   CharsetAlphanum + "#$_", // oracle password requirements
 	// some others:
+	"num":   "0123456789",
 	"bin":   "01",
 	"hex":   "0123456789ABCDEF",
 	"al":    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
