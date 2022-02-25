@@ -9,14 +9,18 @@ _Usage of entrop_:
   -a string
         algorithm with optional params: e.g. ar:3:32768 or rh:62500 (default "pbs5")
   -c string
-        charset, see charsets.go (default "alnum")
+        charset name or spec, see charsets.go (default "alnum")
   -d uint
         alg settings ('defaults') version
   -i    inline mode, i.e. no hidden inputs
+  -jcw
+        join words using counting mapper
   -l uint
         password length (default 25)
   -nq
-        no quality check/retry
+        no quality check/retry, same as -q 0
+  -q uint
+        required num. of character categories for passwd. quality (default 3)
   -s string
         separator (default " ")
   -v    verbose mode
