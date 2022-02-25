@@ -45,7 +45,7 @@ func TestGCD(t *testing.T) {
 }
 
 func TestStringToArgs(t *testing.T) {
-	line := "-a rh:1001 -c goog -l 50 -s \"?   $\"  hello world"
+	line := ` -a rh:1001 -c goog -l 50 -s "h e l ^ l o"  hello world   `
 	args := StringToArgs(line)
-	t.Logf("args: %+v", strings.Join(args, ","))
+	t.Logf("args: %+v", strings.Join(args, "|"))
 }

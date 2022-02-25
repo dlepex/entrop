@@ -31,7 +31,7 @@ type Options struct {
 	Words      []string
 	PwdLen     uint
 	Charset    string
-	Quality    bool
+	Quality    uint // required number of char. cats in password (max = 4)
 }
 
 type AlgSpec struct {
@@ -49,16 +49,19 @@ func (opts *Options) Parse(args []string) {
 	fs.UintVar(&opts.PwdLen, "l", DefaultLen, "password length")
 	fs.UintVar(&opts.Ver, "d", 0, "alg settings ('defaults') version")
 	fs.StringVar(&opts.Sep, "s", DefaultSep, "separator")
-	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset, see charsets.go")
+	fs.StringVar(&opts.Charset, "c", DefaultCharset, "charset name or spec, see charsets.go")
 	fs.BoolVar(&opts.CountWords, "jcw", false, "join words using counting mapper")
-	isNoQuality := fs.Bool("nq", false, "no quality check/retry")
+	fs.UintVar(&opts.Quality, "q", 3, "required num. of character categories for passwd. quality")
+	isNoQuality := fs.Bool("nq", false, "no quality check/retry, same as -q 0")
 
 	Check(fs.Parse(args))
 	if *isVersion {
 		fmt.Println(EntropVersion())
 		Terminate("")
 	}
-	opts.Quality = !*isNoQuality
+	if *isNoQuality {
+		opts.Quality = 0
+	}
 	opts.Alg = AlgSpecFromStr(spec)
 
 	if *isNotInteractive {
@@ -78,7 +81,13 @@ func (opts *Options) Init() {
 	if len(opts.Words) == 0 {
 		Terminate("no words")
 	}
-	opts.Quality = opts.Quality && opts.PwdLen >= 6 && CharsetSupportsQuality(opts.Charset)
+	charsetQuality := CharsetQuality(opts.Charset)
+	if opts.PwdLen < 6 || int(opts.Quality) > charsetQuality {
+		if verbose {
+			log.Printf("ignore quality settings: %d charset qual: %d", opts.Quality, charsetQuality)
+		}
+		opts.Quality = 0
+	}
 	SetAlgDefaults(int(opts.Ver))
 	if verbose {
 		log.Printf("init opts: %+v", opts)
@@ -117,7 +126,7 @@ func (opts *Options) Password() string {
 	wstr := wstrinit
 	for i := 2; ; i++ {
 		pwd := opts.tryGenPassword(wstr)
-		if !opts.Quality || PasswordQuality(pwd) >= 3 {
+		if NumOfCharCats(pwd) >= int(opts.Quality) {
 			return pwd
 		}
 		wstr = wstrinit + "@" + strconv.Itoa(i)
@@ -191,6 +200,22 @@ func CallEntrop(line string) string {
 }
 
 func StringToArgs(line string) []string {
-	//TODO better implementation, supporting quotation (e.g. -s "   ")
-	return strings.Fields(line)
+	q := false
+	a := strings.FieldsFunc(line, func(r rune) bool {
+		if r == '"' {
+			q = !q
+		}
+		return !q && strings.ContainsRune(" \t\r\n", r)
+	})
+	for i, s := range a {
+		a[i] = unquote(s)
+	}
+	return a
+}
+
+func unquote(s string) string {
+	if u, err := strconv.Unquote(s); err == nil {
+		return u
+	}
+	return s
 }

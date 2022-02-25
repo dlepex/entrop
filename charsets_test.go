@@ -6,7 +6,7 @@ import (
 
 func TestCharsets(t *testing.T) {
 	for name, set := range charsetsMap {
-		if !EachRuneUnique(set) {
+		if !EachRuneUnique(string(set)) {
 			t.Errorf("non unique char in charset: %s", name)
 		}
 	}
@@ -31,10 +31,7 @@ func TestCharsets(t *testing.T) {
 	}
 }
 
-func EachRuneUnique(s string) bool {
-	m := make(map[rune]struct{})
-	for _, r := range s {
-		m[r] = struct{}{}
-	}
-	return len(m) == len([]rune(s))
+func TestCharsetSpecs(t *testing.T) {
+	cs, err := CharsetFromSpec("A|_-=")
+	t.Logf("[%s]err:%s", string(cs), err)
 }
