@@ -40,7 +40,7 @@ type AlgSpec struct {
 }
 
 func (opts *Options) Parse(args []string) {
-	fs := flag.NewFlagSet("entrop", flag.ExitOnError)
+	fs := flag.NewFlagSet("entrop", flag.ContinueOnError)
 	var spec string
 	fs.BoolVar(&verbose, "v", false, "verbose mode")
 	isNotInteractive := fs.Bool(OptInlineMode, false, "inline mode, i.e. no hidden inputs")
