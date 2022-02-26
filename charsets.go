@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -91,9 +92,11 @@ func CharsetQuality(charsetname string) int {
 }
 
 // CharsetFromSpec parses charset specification and produces charset
-// Spec format: <categories>|<additional characters>
-// B - upper letters, b - lower, 1 - digits, A - all alphanumeric (Bb1)
+// Spec format: <char.categories>|<additional characters>
+// Char categories:
+// B - upper letters, b - lower letters, 1 - digits, A - all alphanumeric (same as Bb1)
 // Example: A|_@-  charset that contains alphanumeric letters and symbols: _ @ -
+// Order of char cats or additional characters does not matter.
 func CharsetFromSpec(spec string) (Charset, error) {
 	if !strings.ContainsRune(spec, '|') {
 		return "", ErrNotCharsetSpec
@@ -112,6 +115,10 @@ func CharsetFromSpec(spec string) (Charset, error) {
 		}
 	}
 
+	if !EachRuneUnique(catsPart) {
+		return "", fmt.Errorf("repeated char categories")
+	}
+
 	// write cats part:
 	if strings.ContainsRune(catsPart, 'A') {
 		b.WriteString(CharsetAlphanum)
@@ -127,9 +134,11 @@ func CharsetFromSpec(spec string) (Charset, error) {
 		}
 	}
 	// write additional characters part:
-	b.WriteString(charsPart)
-
+	b.WriteString(StrSortByChar(charsPart))
 	charset := b.String()
+	if len(charset) < 2 {
+		return "", fmt.Errorf("charset too small")
+	}
 	if !EachRuneUnique(charset) {
 		return "", fmt.Errorf("repeated characters")
 	}
@@ -142,4 +151,20 @@ func EachRuneUnique(s string) bool {
 		m[r] = struct{}{}
 	}
 	return len(m) == len([]rune(s))
+}
+
+func StrSortByChar(s string) string {
+	r := StrToRunes(s)
+	sort.Slice(r, func(i, j int) bool {
+		return r[i] < r[j]
+	})
+	return string(r)
+}
+
+func StrToRunes(s string) []rune {
+	var r []rune
+	for _, runeValue := range s {
+		r = append(r, runeValue)
+	}
+	return r
 }

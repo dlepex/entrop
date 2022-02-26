@@ -53,4 +53,7 @@ func TestCharsetSpecs(t *testing.T) {
 	if len(cs) != 5 {
 		t.Errorf("bad charset")
 	}
+	if GetCharset("Bb1|+!$") != GetCharset("b1B|!$+") {
+		t.Errorf("charset spec order should not matter")
+	}
 }
