@@ -24,7 +24,7 @@ var (
 
 type Charset string
 
-var charsetsMap = map[string]Charset{
+var predefCharsets = map[string]Charset{
 	"alnum": CharsetAlphanum, // alphanumeric, default
 	"pasc":  CharsetPrintableAscii,
 	"goog":  CharsetPrintableAscii,   // synonym for pasc
@@ -33,15 +33,16 @@ var charsetsMap = map[string]Charset{
 	"num":   CharsetDigits,
 	"bin":   "01",
 	"hex":   "0123456789ABCDEF",
-	"al":    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+	"al":    CharsetUpper + CharsetLower,
 	"lower": CharsetLower,
 	"upper": CharsetUpper,
 	"words": "abcdefghijklmnopqrstuvwxyz ",
+	"old":   CharsetAlphanum, // old charset is for backward compat. and is handled differently
 }
 
-// GetCharset resolves charset name by name or from spec
+// GetCharset resolves charset by name or from spec
 func GetCharset(nameOrSpec string) Charset {
-	if cs, ok := charsetsMap[nameOrSpec]; ok {
+	if cs, ok := predefCharsets[nameOrSpec]; ok {
 		return cs
 	}
 	cs, err := CharsetFromSpec(nameOrSpec)
@@ -53,6 +54,7 @@ func GetCharset(nameOrSpec string) Charset {
 	return Charset(cs)
 }
 
+// StringInCharset converts bytes into string in some charset
 // charsetname - name of predefined charset or charset spec
 // see CharsetFromSpec
 func StringInCharset(a []byte, charsetname string) string {
@@ -64,14 +66,12 @@ func StringInCharset(a []byte, charsetname string) string {
 			b[i] = repl[int(c)%mod]
 		}
 		return string(b)
-	} else {
-		b0 := base64.RawURLEncoding.EncodeToString(a)
-		repl := strings.NewReplacer("_", "", "-", "", "=", "")
-		return repl.Replace(b0)
 	}
+	// backward compatibility:
+	b0 := base64.RawURLEncoding.EncodeToString(a)
+	repl := strings.NewReplacer("_", "", "-", "", "=", "")
+	return repl.Replace(b0)
 }
-
-var ()
 
 // NumOfCharCats returns number of char. categories, it is expected to be >= 3 for good pwd.
 func NumOfCharCats(str string) int {
